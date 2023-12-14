@@ -1,0 +1,84 @@
+SQL> --새로운 프로젝트에 사용할 사용자 계정을 만들어 보자
+SQL> -- 관리자 권한으로 프로젝트에 사용할 사용자 및 그 사용자가 사용할 DB를 구축하자
+SQL> --데이터베이스 만들기
+SQL> create tablespace js1208
+  2  datafile 'C:\oraclexe\app\oracle\oradata\XE\JS1208.DBF'
+  3  size 1M;
+
+Tablespace created.
+
+SQL> --사용자 만들기
+SQL> create user js
+  2  identified by 1234
+  3  default tablespace JS1208
+  4  quota unlimited on JS1208;
+
+User created.
+
+SQL> --생성된 유저로 접속 전환하기
+SQL> conn js/1234
+ERROR:
+ORA-01045: user JS lacks CREATE SESSION privilege; logon denied 
+
+
+Warning: You are no longer connected to ORACLE.
+SQL> --사용자를 생성했다고 하여, 모든 권한을 취득한 것이 아니기때문에
+SQL> --필요한 권한이 있을 경우엔 관리자 계정에서 권한을 부여해야 한다.
+SQL> show user
+USER is ""
+SQL> conn system/1234
+Connected.
+SQL> show user
+USER is "SYSTEM"
+SQL> --SQL문 중 권한을 부여하는 명령어 GRANT
+SQL> grant create session to js;
+
+Grant succeeded.
+
+SQL> conn js/1234
+Connected.
+SQL> show user
+USER is "JS"
+SQL> --시스템 계정에서 테이블에 대한 (수정, 추가, 삭제)권한을 부여하자.
+SQL> conn system/1234
+Connected.
+SQL> grant create table to js;
+
+Grant succeeded.
+
+SQL> conn js/1234
+Connected.
+SQL> --js가 접속, 테이블에 대한 권한 취득 개발에 집중하자
+SQL> create new table pet(
+  2  name char(20),
+  3  loc char(20)
+  4  );
+create new table pet(
+       *
+ERROR at line 1:
+ORA-00901: invalid CREATE command 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  create table pet(
+  2  name char(20),
+  3  loc char(20)
+  4* )
+SQL> /
+
+Table created.
+
+SQL> --테이블에 레코드한건 넣기
+SQL>  insert into pet(name, loc) values('tiger','korea')
+
+1 row created.
+
+SQL> --들어간 레코드 조회하기
+SQL> select name, loc from pet
+SQL> spool off
+
+
+3. 내 오라클이 아닌 다른 서버를 원격 접속할 때 필요한 설정
+TNANAMES.ORA파일 수정

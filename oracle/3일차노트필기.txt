@@ -1,0 +1,60 @@
+오라클
+cmd 창에서 오라클접속 전용프로그램(SQLPlus이용 접속 시도)
+=> 이런 목적의 전용 프로그램을 접속 클라이언트라고 한다.
+
+cmd에서 sql 띄우기
+
+1) sys로 접속해서 직접관리하지 말고, system 계정으로 관리업무 진행
+	- sqlplus sys/ as sysdba
+
+비번 은 enter로 넘기기
+제대로 접속되어 있는지 나를 확인해보기(현재 사용자체크)
+	- show user
+
+
+- 최초 설치 직후엔 아직 system의 비번을 모르기때문에,  
+  sys에서 system계정 정보를 바꿔버리자.
+	- alter user system
+	2 identified by 1234;
+
+2) system 계정으로 접속하기
+	- connect system/1234; = conn system/1234;
+
+3) 프로젝트에 사용할 데이터베이스 구축하기( 파일생성 포함)
+   오라클은 데이터베이스 파일을 논리적으로 한개이상으로 구성할 수 있기 때문에,
+   특히 명칭을 tablespace라 칭한다. (db는  ''만 사용!!!!!!!)
+	- create tablespace testspace	(테이블 스페이스를 만듬)
+	  datafile 'C:\oraclexe\app\oracle\oradata\XE\testspace.dbf'
+	  size 1M;
+	
+	- 테이블 만들기 행(레코드) / 열(column - 주제)
+	- create table animal (
+	  name varchar2(20) , 
+	  loc    varchar2(20) ,
+	  age   number 
+	  );	
+
+	- 생성된 테이블에 레코드를 넣어보자
+	- insert into animal(name, loc, age) values('tiger', 'india', 20);
+	- insert into animal(name, loc, age) values('turtle','korea', 50);
+
+	- 레코드가 들어갔는지 조회해보자
+	- select name, loc, age
+	  from animal;
+
+SQL 플러스가 콘솔에서 실행되기 때문에, (편집기가 아닌 명령창이므로) 수정이 불편
+
+해결방안) SQLPlus  자체에서 지원하는 전용 편집기 사용해본다.
+EDIT or ed 로 편집기를 띄우자 (저장은 ctrl s / 종료는 alt f4)
+
+수정 완료 후 편집된 내용이 콘솔에 적용 이 명령을 다시 실행하고자 한다면
+RUN or / 를 입력하고 enter를 하면 실행한다.
+
+SQLPlus 접속 이후, 개발자가 처리한 모든 명령 및 메시지를 기록해보자
+	저장하고 싶은 경로 C:\fullstack\database\oracle\3일차노트필기.txt
+	- SPOOL '저장하고 싶은 파일명'
+--------------------------------------------------------------------------------
+* --는 주석이다.
+SQL> -- 이 시점부터는 화면이 텍스트 파일에 녹화되어 저장됨
+SQL> -- 수업이 끝나면 녹화 종료
+SQL> spool off 로 파일 저장

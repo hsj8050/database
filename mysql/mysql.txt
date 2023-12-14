@@ -1,0 +1,56 @@
+Mysql
+다운로드 시
+custom -> mysql server 5.7 x64 -> execute -> c++ 설치 next -> execute -> next
+port번호 기억 : 3306
+비번은 1234로 설정함
+
+Mysql의 ROOT 권한으로 접속하기
+	실행
+		나	  유저명
+	mysql -h localhost -u root  -p
+	password : 1234
+
+SQL (오직 데이터베이스 시스템만 이해하는 언어)
+      Structured Query Language : 구조화된 질의어 (ex, html)
+접속이 성공되었으면, 예전에 만들어 두었던 db에 테이블 생성해보기
+
+>현재 서버에 존재하는 모든 db 목록보기
+show databases;
+
+>db 생성
+create database test1205;
+
+>생성한 db중 내가 원하는 db 선택하기
+use test1205;
+
+>데이터가 누적될 표 만들기
+create table myinfo(
+   name char(20),  -영문 20자 / 한글 10자
+   phone char(20) - 폰번호의 경우 010 => 10이므로 문자로해야한다.
+);
+
+>표에 데이터 넣어보기
+insert into myinfo(name, phone) values('한상주','0101111');
+
+>표에 들어간 데이터 조회
+select name, phone from myinfo;
+-------------------------------------------------------
+
+오라클과 mysql은 명령어가 비슷하다.
+> mysql 접속
+mysql -h localhost -u root -p
+1234
+
+> database 만들기 , 제거하기
+create database (db명);  drop database (db명);
+
+> 만든 db 사용하기
+use (db명);
+
+> 집계함수도 동일하게 통한다. (sum / avg / count 등등)
+> 조건문 (단, 여기서는 일치는  '='하나만 사용한다.)
+select * from emp where (조건);
+1) and 연산자의 경우
+select * from emp where  (조건) and (조건);
+2) 전체를 가져오는 것이 아니라 몇가지만 가져올 경우
+select (),(),() from emp where 조건
