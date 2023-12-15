@@ -1,0 +1,321 @@
+SQL> --사용자 목록 보기
+SQL> --딕셔너리라 불리는 시스템 테이블 조회 관리자 계정의 경우 dba_로 시작
+SQL> desc dba_users;
+ Name                                      Null?    Type
+ ----------------------------------------- -------- ----------------------------
+ USERNAME                                  NOT NULL VARCHAR2(30)
+ USER_ID                                   NOT NULL NUMBER
+ PASSWORD                                           VARCHAR2(30)
+ ACCOUNT_STATUS                            NOT NULL VARCHAR2(32)
+ LOCK_DATE                                          DATE
+ EXPIRY_DATE                                        DATE
+ DEFAULT_TABLESPACE                        NOT NULL VARCHAR2(30)
+ TEMPORARY_TABLESPACE                      NOT NULL VARCHAR2(30)
+ CREATED                                   NOT NULL DATE
+ PROFILE                                   NOT NULL VARCHAR2(30)
+ INITIAL_RSRC_CONSUMER_GROUP                        VARCHAR2(30)
+ EXTERNAL_NAME                                      VARCHAR2(4000)
+ PASSWORD_VERSIONS                                  VARCHAR2(8)
+ EDITIONS_ENABLED                                   VARCHAR2(1)
+ AUTHENTICATION_TYPE                                VARCHAR2(8)
+
+SQL> selcect username from dba_users;
+SP2-0734: unknown command beginning "selcect us..." - rest of line ignored.
+SQL> select username from dba_users;
+
+USERNAME                                                                        
+------------------------------------------------------------                    
+SYS                                                                             
+SYSTEM                                                                          
+ANONYMOUS                                                                       
+JS                                                                              
+USER1211                                                                        
+APEX_PUBLIC_USER                                                                
+FLOWS_FILES                                                                     
+APEX_040000                                                                     
+OUTLN                                                                           
+DIP                                                                             
+ORACLE_OCM                                                                      
+
+USERNAME                                                                        
+------------------------------------------------------------                    
+XS$NULL                                                                         
+MDSYS                                                                           
+CTXSYS                                                                          
+DBSNMP                                                                          
+XDB                                                                             
+APPQOSSYS                                                                       
+HR                                                                              
+
+18 rows selected.
+
+SQL> set linesize 200
+SQL> set pagesize 20
+SQL> conn user1211/1234
+Connected.
+SQL> --유저가 보유한 테이블목록
+SQL> desc user_tables;
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ TABLE_NAME                                                                                                        NOT NULL VARCHAR2(30)
+ TABLESPACE_NAME                                                                                                            VARCHAR2(30)
+ CLUSTER_NAME                                                                                                               VARCHAR2(30)
+ IOT_NAME                                                                                                                   VARCHAR2(30)
+ STATUS                                                                                                                     VARCHAR2(8)
+ PCT_FREE                                                                                                                   NUMBER
+ PCT_USED                                                                                                                   NUMBER
+ INI_TRANS                                                                                                                  NUMBER
+ MAX_TRANS                                                                                                                  NUMBER
+ INITIAL_EXTENT                                                                                                             NUMBER
+ NEXT_EXTENT                                                                                                                NUMBER
+ MIN_EXTENTS                                                                                                                NUMBER
+ MAX_EXTENTS                                                                                                                NUMBER
+ PCT_INCREASE                                                                                                               NUMBER
+ FREELISTS                                                                                                                  NUMBER
+ FREELIST_GROUPS                                                                                                            NUMBER
+ LOGGING                                                                                                                    VARCHAR2(3)
+ BACKED_UP                                                                                                                  VARCHAR2(1)
+ NUM_ROWS                                                                                                                   NUMBER
+ BLOCKS                                                                                                                     NUMBER
+ EMPTY_BLOCKS                                                                                                               NUMBER
+ AVG_SPACE                                                                                                                  NUMBER
+ CHAIN_CNT                                                                                                                  NUMBER
+ AVG_ROW_LEN                                                                                                                NUMBER
+ AVG_SPACE_FREELIST_BLOCKS                                                                                                  NUMBER
+ NUM_FREELIST_BLOCKS                                                                                                        NUMBER
+ DEGREE                                                                                                                     VARCHAR2(40)
+ INSTANCES                                                                                                                  VARCHAR2(40)
+ CACHE                                                                                                                      VARCHAR2(20)
+ TABLE_LOCK                                                                                                                 VARCHAR2(8)
+ SAMPLE_SIZE                                                                                                                NUMBER
+ LAST_ANALYZED                                                                                                              DATE
+ PARTITIONED                                                                                                                VARCHAR2(3)
+ IOT_TYPE                                                                                                                   VARCHAR2(12)
+ TEMPORARY                                                                                                                  VARCHAR2(1)
+ SECONDARY                                                                                                                  VARCHAR2(1)
+ NESTED                                                                                                                     VARCHAR2(3)
+ BUFFER_POOL                                                                                                                VARCHAR2(7)
+ FLASH_CACHE                                                                                                                VARCHAR2(7)
+ CELL_FLASH_CACHE                                                                                                           VARCHAR2(7)
+ ROW_MOVEMENT                                                                                                               VARCHAR2(8)
+ GLOBAL_STATS                                                                                                               VARCHAR2(3)
+ USER_STATS                                                                                                                 VARCHAR2(3)
+ DURATION                                                                                                                   VARCHAR2(15)
+ SKIP_CORRUPT                                                                                                               VARCHAR2(8)
+ MONITORING                                                                                                                 VARCHAR2(3)
+ CLUSTER_OWNER                                                                                                              VARCHAR2(30)
+ DEPENDENCIES                                                                                                               VARCHAR2(8)
+ COMPRESSION                                                                                                                VARCHAR2(8)
+ COMPRESS_FOR                                                                                                               VARCHAR2(12)
+ DROPPED                                                                                                                    VARCHAR2(3)
+ READ_ONLY                                                                                                                  VARCHAR2(3)
+ SEGMENT_CREATED                                                                                                            VARCHAR2(3)
+ RESULT_CACHE                                                                                                               VARCHAR2(7)
+
+SQL> select table_name from user_tables;
+
+TABLE_NAME                                                                                                                                                                                              
+------------------------------------------------------------                                                                                                                                            
+DEPT                                                                                                                                                                                                    
+EMP                                                                                                                                                                                                     
+DEPT2                                                                                                                                                                                                   
+EMP2                                                                                                                                                                                                    
+
+SQL> --SQL문의 3가지 유형
+SQL> --DDL (create, drop, alter)정의어
+SQL> --DML (insert, delete, update)
+SQL> --DCL (grant, revoke)
+SQL> --우리반 학생들의 정보를 넣어보자
+SQL> create table member(
+  2  classname char(20)
+  3  );
+
+Table created.
+
+SQL> insert into member(classname) values('FULLSTACK');
+
+1 row created.
+
+SQL> select * from member;
+
+CLASSNAME                                                                                                                                                                                               
+----------------------------------------                                                                                                                                                                
+FULLSTACK                                                                                                                                                                                               
+
+SQL> drop table member;
+
+Table dropped.
+
+SQL> create table member(
+  2  classname varchar2(20)
+  3  ,name varchar2(20)
+  4  ,phone varchar2(20)
+  5  ,loc varchar2(20)
+  6  );
+
+Table created.
+
+SQL> insert into member(classname, name, phone, loc)
+  2  values('fullstack', 'batman', '010', 'godam');
+
+1 row created.
+
+SQL> insert into member(classname, name, phone, loc)
+  2  values('fullstack', 'sangju', '01064739795', 'gimpo');
+
+1 row created.
+
+SQL> insert into member(classname, name, phone, loc)
+  2  values('fullstack','chae','01012345678','seoul');
+
+1 row created.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> select * from member;
+
+CLASSNAME                                NAME                                     PHONE                                    LOC                                                                          
+---------------------------------------- ---------------------------------------- ---------------------------------------- ----------------------------------------                                     
+fullstack                                batman                                   010                                      godam                                                                        
+fullstack                                sangju                                   01064739795                              gimpo                                                                        
+fullstack                                chae                                     01012345678                              seoul                                                                        
+
+SQL> --레코드 한건 지우기
+SQL> delete member where name='batman';
+
+1 row deleted.
+
+SQL> --수정 update문
+SQL> update member set phone ='01098765432' where name='sangju';
+
+1 row updated.
+
+SQL> select * from member;
+
+CLASSNAME                                NAME                                     PHONE                                    LOC                                                                          
+---------------------------------------- ---------------------------------------- ---------------------------------------- ----------------------------------------                                     
+fullstack                                sangju                                   01098765432                              gimpo                                                                        
+fullstack                                chae                                     01012345678                              seoul                                                                        
+
+SQL> --DDL(alter문)
+SQL> --기존에 없던 컬럼을 추가해보자 즉, 구조를 변경한다.
+SQL> alter table member
+  2  add age number;
+
+Table altered.
+
+SQL> select * from member;
+
+CLASSNAME                                NAME                                     PHONE                                    LOC                                             AGE                          
+---------------------------------------- ---------------------------------------- ---------------------------------------- ---------------------------------------- ----------                          
+fullstack                                sangju                                   01098765432                              gimpo                                                                        
+fullstack                                chae                                     01012345678                              seoul                                                                        
+
+SQL> --기존 테이블에 존재하던 컬럼을 제거한다.
+SQL> alter table member
+  2  drop column age;
+
+Table altered.
+
+SQL> --기존 테이블에 존재하던 컬럼명을 변경하자
+SQL> alter table member
+  2  rename column loc to addr;
+
+Table altered.
+
+SQL> select * from member;
+
+CLASSNAME                                NAME                                     PHONE                                    ADDR                                                                         
+---------------------------------------- ---------------------------------------- ---------------------------------------- ----------------------------------------                                     
+fullstack                                sangju                                   01098765432                              gimpo                                                                        
+fullstack                                chae                                     01012345678                              seoul                                                                        
+
+SQL> desc member;
+ Name                                                                                                              Null?    Type
+ ----------------------------------------------------------------------------------------------------------------- -------- ----------------------------------------------------------------------------
+ CLASSNAME                                                                                                                  VARCHAR2(20)
+ NAME                                                                                                                       VARCHAR2(20)
+ PHONE                                                                                                                      VARCHAR2(20)
+ ADDR                                                                                                                       VARCHAR2(20)
+
+SQL> --기존 컬럼의 데이터 타입의 길이를 변경해달라
+SQL> alter table member
+  2  modify phone varchar2(30);
+
+Table altered.
+
+SQL> --기존 회원들을 모두 삭제
+SQL> delete member;
+
+2 rows deleted.
+
+SQL> commit;
+
+Commit complete.
+
+SQL> insert into member(classname, name, phone, loc)
+  2  ;
+
+*
+ERROR at line 2:
+ORA-00926: missing VALUES keyword 
+
+
+SQL> alter table member
+  2  drop column addr;
+
+Table altered.
+
+SQL> insert into member(classname, name, phone)
+  2  values('fullstack','batman','010');
+
+1 row created.
+
+SQL> insert into member(classname, name, phone)
+  2  values('fullstack','batman','010');
+
+1 row created.
+
+SQL> select * from member;
+
+CLASSNAME                                NAME                                     PHONE                                                                                                                 
+---------------------------------------- ---------------------------------------- ------------------------------------------------------------                                                          
+fullstack                                batman                                   010                                                                                                                   
+fullstack                                batman                                   010                                                                                                                   
+
+SQL> --테이블 생성시 문제가 없는 데이터를 저장하려면 설계시
+SQL> --무결성을 위한 설계가 필요하다.
+SQL> --이럴때 사용되는 제한 조건이 있는데, 이 제한 조건을 가리켜
+SQL> --제약조건(CONSTRAINT)
+SQL> --즉, 무결성 데이터를 받아들이기 위해 컬럼에 지정할 수 있는
+SQL> --까다로운 조건을 가리켜 제약조건이라 한다.
+SQL> --TABLE 생성시 정의할 수 있다.
+SQL> --제약조건은 여러가지가 있는데 그 중 중복된 데이터를 허용하지 않는
+SQL> --유니크 제약조건을 사용해본다.
+SQL> create table member2(
+  2  ID varchar2(20) UNIQUE
+  3  , NAME VARCHAR2(20)
+  4  , PHONE VARCHAR2(20)
+  5  );
+
+Table created.
+
+SQL> INSERT INTO MEMBER2(ID, NAME, PHONE)
+  2  VALUES('BATMAN','SJ','010');
+
+1 row created.
+
+SQL> INSERT INTO MEMBER2(ID, NAME, PHONE)
+  2  VALUES('BATMAN','SJ','010');
+INSERT INTO MEMBER2(ID, NAME, PHONE)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (USER1211.SYS_C006999) violated 
+
+
+SQL> --결론:unique 제약조건이 걸려있는 컬럼에 동일한 데이터를
+SQL> --입력할 경우, 제약조건 위반 에러 발생..
+SQL> --제약조건을 통해 얻을 수 있는 이득? 무결성 데이터만 받아들인다.
+SQL> spool off
