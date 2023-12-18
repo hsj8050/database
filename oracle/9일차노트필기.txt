@@ -1,0 +1,284 @@
+SQL> --테이블 생성시, 문제가 없는 유효한 데이터만을 받아들이기 위해,
+SQL> --컬럼에 여러 종류의 제한을 둘 수 있는데, 이렇게 컬럼에 적용할 수 있는
+SQL> --제한조건을 가리켜 제약조건(constraint)이라 한다.
+SQL> --제약조건의 목적 : 데이터의 무결성을 위한 제한사항
+SQL> --1) 중복된 데이터를 허용하지 않는 제약조건 unique
+SQL> select table
+  2  _name from user_tables;
+select table
+       *
+ERROR at line 1:
+ORA-00936: missing expression 
+
+
+SQL> select table_name from user_tables;
+
+TABLE_NAME                                                                      
+------------------------------------------------------------                    
+DEPT                                                                            
+EMP                                                                             
+DEPT2                                                                           
+EMP2                                                                            
+MEMBER                                                                          
+MEMBER2                                                                         
+
+6 rows selected.
+
+SQL> create table member3(
+  2  name varchar2(20)
+  3  , phone varchar2(20)
+  4  );
+
+Table created.
+
+SQL> insert into member3(name, phone)
+  2  values('tiger','000');
+
+1 row created.
+
+SQL> /
+
+1 row created.
+
+SQL> drop table member3;
+
+Table dropped.
+
+SQL> --unique 제약조건을 부여해서 테이블 생성
+SQL> create table member3(
+  2  name varchar2(20)
+  3  , phone varchar2(20)
+  4  , constraint uc_name unique (name)
+  5  );
+
+Table created.
+
+SQL> insert into member3(name, phone)
+  2  values('tiger', '000');
+
+1 row created.
+
+SQL> /
+insert into member3(name, phone)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (USER1211.UC_NAME) violated 
+
+
+SQL> --제약조건 중 널 null값을 허용하지 않는 제약조건
+SQL> insert into member3(name) values('kk');
+
+1 row created.
+
+SQL> --널을 허용하지 않는 제약조건 not null제약조건이라한다.
+SQL> drop table member3;
+
+Table dropped.
+
+SQL> create table member3(
+  2  name varchar2(20)
+  3  , phone not null
+  4  , constraint uc_name unique (name)
+  5  );
+, phone not null
+  *
+ERROR at line 3:
+ORA-02263: need to specify the datatype for this column 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  create table member3(
+  2  name varchar2(20)
+  3  , phone varchar2(13) not null
+  4  , constraint uc_name unique (name)
+  5* )
+SQL> /
+
+Table created.
+
+SQL> insert into member3(name) values('kk');
+insert into member3(name) values('kk')
+*
+ERROR at line 1:
+ORA-01400: cannot insert NULL into ("USER1211"."MEMBER3"."PHONE") 
+
+
+SQL> drop table member3;
+
+Table dropped.
+
+SQL> --컬럼에 들어갈 값을 특정 값으로 제한할 수 있는 제약조건
+SQL> --check 제약조건 남, 여 / 남자, 여자
+SQL> --나이르 18세까지 허용하고 싶은 경우
+SQL> create table member3(
+  2  name varchar2(20) unique
+  3  , phone varchar2(13) not null
+  4  , age number
+  5  , constraint chk_age check (age>18)
+  6  );
+
+Table created.
+
+SQL> insert into member3(name, phone, age)
+  2  values('batman','111',18);
+insert into member3(name, phone, age)
+*
+ERROR at line 1:
+ORA-02290: check constraint (USER1211.CHK_AGE) violated 
+
+
+SQL> insert into member3(name, phone, age)
+  2  values('batman','111',20);
+
+1 row created.
+
+SQL> --제약조건 중, 명시하지 않아도 디폴트로 지정한 값을
+SQL> --기본값으로 할 수 있는 제약조건을 default 제약조건이라 한다.
+SQL> drop table member3;
+
+Table dropped.
+
+SQL> select sysdate from dual;
+
+SYSDATE                                                                         
+--------                                                                        
+23/12/18                                                                        
+
+SQL> select * from dual;
+
+DU                                                                              
+--                                                                              
+X                                                                               
+
+SQL> --아무런 의미가 없는 더미 테이블 생성
+SQL> create table dummy(
+  2  x varchar2(2)
+  3  );
+
+Table created.
+
+SQL> insert into dummy(x) valuse('M');
+insert into dummy(x) valuse('M')
+                     *
+ERROR at line 1:
+ORA-00926: missing VALUES keyword 
+
+
+SQL> insert into dummy(x) values('M');
+
+1 row created.
+
+SQL> select * from dummy;
+
+X                                                                               
+----                                                                            
+M                                                                               
+
+SQL> select '한상주' from dummy;
+
+'한상주'                                                                        
+------------------                                                              
+한상주                                                                          
+
+SQL> select sysdate from dual;
+
+SYSDATE                                                                         
+--------                                                                        
+23/12/18                                                                        
+
+SQL> --회원가입시 가입날짜가 기본으로 들어갈수 있도록
+SQL> --default 제약조건을 적용해보자
+SQL> create table member3(
+  2  id varchar2(20) unique
+  3  , phone varchar2(13) not null
+  4  , age number check (age>18)
+  5  , regdate date default sysdate
+  6  );
+
+Table created.
+
+SQL> insert into member3(id, phone, age)
+  2  values('superman','2222',20);
+
+1 row created.
+
+SQL> set linesize 200
+SQL> select * from member3;
+
+ID                                       PHONE                             AGE REGDATE                                                                                                                  
+---------------------------------------- -------------------------- ---------- --------                                                                                                                 
+superman                                 2222                               20 23/12/18                                                                                                                 
+
+SQL> insert into member3(phone, age) values('3333', 20);
+
+1 row created.
+
+SQL> insert into member3(phone, age) values('3333', 20);
+
+1 row created.
+
+SQL> select * from member3;
+
+ID                                       PHONE                             AGE REGDATE                                                                                                                  
+---------------------------------------- -------------------------- ---------- --------                                                                                                                 
+superman                                 2222                               20 23/12/18                                                                                                                 
+                                         3333                               20 23/12/18                                                                                                                 
+                                         3333                               20 23/12/18                                                                                                                 
+
+SQL> --unique가 유일한 데이터만을 받아들이기는 하지만, null을
+SQL> --잡아내지 못한다.
+SQL> --해결책) id와 같은 유일한 데이터만을 받아들이는 컬럼을 지정시
+SQL> -- unique만으로는 부족하므로, not null을 함께 적용해야 한다,
+SQL> -- 그런데 unique + not null을 합친 제약조건이 지원되므로,
+SQL> --위의 조합보다는 primary key 제약조건을 사용한다...
+SQL> --테이블 생성시 primary key 제약조건은 필수다.
+SQL> drop table member3;
+
+Table dropped.
+
+SQL> create table member3(
+  2  id varchar2(20) primary key
+  3  , phone varchar2(13) not null
+  4  , age number check (age > 18)
+  5  , regdate date default sysdate
+  6  );
+
+Table created.
+
+SQL> insert into member3(phone, age) values('333',20);
+insert into member3(phone, age) values('333',20)
+*
+ERROR at line 1:
+ORA-01400: cannot insert NULL into ("USER1211"."MEMBER3"."ID") 
+
+
+SQL> create table member4(
+  2  id varchar2(20) primary key
+  3  , name varchar2(20) not null
+  4  , age number check (age >= 19 and age <50)
+  5  , regdate date default sysdate
+  6  );
+
+Table created.
+
+SQL> insert into member4(id, name, age) values('id','333', 30);
+
+1 row created.
+
+SQL> insert into member4(id, name, age) values('id','333', 50);
+insert into member4(id, name, age) values('id','333', 50)
+*
+ERROR at line 1:
+ORA-02290: check constraint (USER1211.SYS_C007013) violated 
+
+
+SQL> insert into member4(id, name, age) values('name','333', 50);
+insert into member4(id, name, age) values('name','333', 50)
+*
+ERROR at line 1:
+ORA-02290: check constraint (USER1211.SYS_C007013) violated 
+
+
+SQL> spool off
