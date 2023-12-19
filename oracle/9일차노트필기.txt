@@ -280,5 +280,37 @@ insert into member4(id, name, age) values('name','333', 50)
 ERROR at line 1:
 ORA-02290: check constraint (USER1211.SYS_C007013) violated 
 
+name varchar2(20)
+constraint uc_name unique (name)
+제약하겠다 uc_name이라는 이름의 unique제약조건을  (해당컬럼)에
 
+name varchar2(20) unique
+둘다 같은 방식이나 이름이 없으면 추후 수정같은게 힘들다.
+-------------------------------------------------
+
+phone varchar2(20) not null
+폰번호 글자크기 / null을 받지 않겠다.
+
+--------------------------------------------
+
+constraint chk_age check (age>18)
+제약조건 chk_age라는 이름의 check제약조건 (그 체크의 조건)
+
+------------------------------------------------------------
+
+현재 날짜 확인 방법
+select sysdate from dual;
+
+default제약조건 가입날짜가 바로 들어가도록 default
+regdate date default sysdate
+날짜를 입력할건데,  기본값으로 현재날짜 넣을거다.
+
+----------------------------------------------------------------
+unique는 null을 잡지 못하기때문에 다음의 primary key사용.
+ create table member3(
+  2  id varchar2(20) primary key
+  3  , phone varchar2(13) not null
+  4  , age number check (age > 18)
+  5  , regdate date default sysdate
+  6  );
 SQL> spool off
