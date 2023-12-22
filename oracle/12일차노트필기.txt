@@ -1,0 +1,257 @@
+SQL> set linesize 250
+SQL> set pagesize 30
+SQL> select * from emp;
+
+     EMPNO ENAME                JOB                       MGR HIREDATE        SAL       COMM     DEPTNO                                                                                                                                                   
+---------- -------------------- ------------------ ---------- -------- ---------- ---------- ----------                                                                                                                                                   
+      7369 SMITH                CLERK                    7902 80/12/17        800                    20                                                                                                                                                   
+      7499 ALLEN                SALESMAN                 7698 81/02/20       1600        300         30                                                                                                                                                   
+      7521 WARD                 SALESMAN                 7698 81/02/22       1250        500         30                                                                                                                                                   
+      7566 JONES                MANAGER                  7839 81/04/02       2975                    20                                                                                                                                                   
+      7654 MARTIN               SALESMAN                 7698 81/09/28       1250       1400         30                                                                                                                                                   
+      7698 BLAKE                MANAGER                  7839 81/05/01       2850                    30                                                                                                                                                   
+      7782 CLARK                MANAGER                  7839 81/06/09       2450                    10                                                                                                                                                   
+      7788 SCOTT                ANALYST                  7566 87/04/19       3000                    20                                                                                                                                                   
+      7839 KING                 PRESIDENT                     81/11/17       5000                    10                                                                                                                                                   
+      7844 TURNER               SALESMAN                 7698 81/09/08       1500          0         30                                                                                                                                                   
+      7876 ADAMS                CLERK                    7788 87/05/23       1100                    20                                                                                                                                                   
+      7900 JAMES                CLERK                    7698 81/12/03        950                    30                                                                                                                                                   
+      7902 FORD                 ANALYST                  7566 81/12/03       3000                    20                                                                                                                                                   
+      7934 MILLER               CLERK                    7782 82/01/23       1300                    10                                                                                                                                                   
+
+14 rows selected.
+
+SQL> select empno, ename, hiredate from emp
+  2  where sal order by asc = (select deptno from emp where ename='allern') ;
+where sal order by asc = (select deptno from emp where ename='allern') 
+          *
+ERROR at line 2:
+ORA-00920: invalid relational operator 
+
+
+SQL> select empno, ename, hiredate from emp where sal = (select deptno from emp where ename='allen') order by asc;
+select empno, ename, hiredate from emp where sal = (select deptno from emp where ename='allen') order by asc
+                                                                                                         *
+ERROR at line 1:
+ORA-00936: missing expression 
+
+
+SQL> select empno, ename, hiredate from emp where sal order by desc = (select deptno from emp where ename='allen');
+select empno, ename, hiredate from emp where sal order by desc = (select deptno from emp where ename='allen')
+                                                 *
+ERROR at line 1:
+ORA-00920: invalid relational operator 
+
+
+SQL> select empno, ename, hiredate
+  2  from emp
+  3  where sal order by desc (select deptno from emp where ename='allen');
+where sal order by desc (select deptno from emp where ename='allen')
+          *
+ERROR at line 3:
+ORA-00920: invalid relational operator 
+
+
+SQL> select empno, ename, hiredate
+  2  from emp
+  3  order by sal = (select deptno from emp where ename='allen') desc;
+order by sal = (select deptno from emp where ename='allen') desc
+             *
+ERROR at line 3:
+ORA-00933: SQL command not properly ended 
+
+
+SQL> select sum(sal) from emp where ename like '%T%';
+
+  SUM(SAL)                                                                                                                                                                                                                                                
+----------                                                                                                                                                                                                                                                
+      6550                                                                                                                                                                                                                                                
+
+SQL> --3 사원의 평균급여보다 급여가 낮은 사원의 이름 급여를 출력하세요
+SQL> select ename, sal from emp where sal < (select avg(sal) from emp);
+
+ENAME                       SAL                                                                                                                                                                                                                           
+-------------------- ----------                                                                                                                                                                                                                           
+SMITH                       800                                                                                                                                                                                                                           
+ALLEN                      1600                                                                                                                                                                                                                           
+WARD                       1250                                                                                                                                                                                                                           
+MARTIN                     1250                                                                                                                                                                                                                           
+TURNER                     1500                                                                                                                                                                                                                           
+ADAMS                      1100                                                                                                                                                                                                                           
+JAMES                       950                                                                                                                                                                                                                           
+MILLER                     1300                                                                                                                                                                                                                           
+
+8 rows selected.
+
+SQL> --4. 20번 부서의 최고 급여보다 많은 급여를 받는 사원의 사원번호, 사원명, 급여 출력
+SQL> select empno, ename, sal from emp where sal > (select max(sal) from emp where deptno=20);
+
+     EMPNO ENAME                       SAL                                                                                                                                                                                                                
+---------- -------------------- ----------                                                                                                                                                                                                                
+      7839 KING                       5000                                                                                                                                                                                                                
+
+SQL> --5. smith와 같은 부서에 속한 사람들의 평균급여보다 큰 급여를 받는 모든 사원의 사원명, 급여
+SQL> select ename, sal from emp where sal>(select avg(sal) from emp   deptno = (select deptno from emp where ename ='SMITH')
+  2  select ename, sal from emp where sal>(select avg(sal) from emp   deptno = (select deptno from emp where ename ='SMITH');
+select ename, sal from emp where sal>(select avg(sal) from emp   deptno = (select deptno from emp where ename ='SMITH')
+                                      *
+ERROR at line 1:
+ORA-00921: unexpected end of SQL command 
+
+
+SQL> select ename, sal from emp where sal>(select avg(sal) from emp
+  2  where deptno=(select deptno from emp where ename='SMITH')
+  3  );
+
+ENAME                       SAL                                                                                                                                                                                                                           
+-------------------- ----------                                                                                                                                                                                                                           
+JONES                      2975                                                                                                                                                                                                                           
+BLAKE                      2850                                                                                                                                                                                                                           
+CLARK                      2450                                                                                                                                                                                                                           
+SCOTT                      3000                                                                                                                                                                                                                           
+KING                       5000                                                                                                                                                                                                                           
+FORD                       3000                                                                                                                                                                                                                           
+
+6 rows selected.
+
+SQL> 1. Allern과 부서가 같은 사원들의 부서번호, 사원명, 입사일 높은급여순 출력
+SP2-0734: unknown command beginning "1. Allern..." - rest of line ignored.
+SQL> --1. Allern과 부서가 같은 사원들의 부서번호, 사원명, 입사일 높은급여순 출력
+SQL> select deptno, ename, hiredate from emp
+  2  where sal from emp where sal = (select deptno from emp where ename='ALLEN') order by desc;
+where sal from emp where sal = (select deptno from emp where ename='ALLEN') order by desc
+          *
+ERROR at line 2:
+ORA-00920: invalid relational operator 
+
+
+SQL> select deptno, ename, hiredate from emp
+  2  where sal = (select deptno from emp where ename='ALLEN') order by desc;
+where sal = (select deptno from emp where ename='ALLEN') order by desc
+                                                                  *
+ERROR at line 2:
+ORA-00936: missing expression 
+
+
+SQL> select deptno,ename, hiredate from emp
+  2  where deptno = (select deptno from emp where ename='ALLEN') order by sal desc;
+
+    DEPTNO ENAME                HIREDATE                                                                                                                                                                                                                  
+---------- -------------------- --------                                                                                                                                                                                                                  
+        30 BLAKE                81/05/01                                                                                                                                                                                                                  
+        30 ALLEN                81/02/20                                                                                                                                                                                                                  
+        30 TURNER               81/09/08                                                                                                                                                                                                                  
+        30 WARD                 81/02/22                                                                                                                                                                                                                  
+        30 MARTIN               81/09/28                                                                                                                                                                                                                  
+        30 JAMES                81/12/03                                                                                                                                                                                                                  
+
+6 rows selected.
+
+SQL> --6. EMP테이블에서 최소급여와 최대급여의 차이를 아래와 같이 출력하세요
+SQL> select (max(sal)- min(sal)) as 급여차이 from emp;
+
+  급여차이                                                                                                                                                                                                                                                
+----------                                                                                                                                                                                                                                                
+      4200                                                                                                                                                                                                                                                
+
+SQL> --7. SCOTT의 급여에서 1000을 뺀 급여보다 적게 받는 사원의 이름, 급여를 출력하세요
+SQL> select ename, sal from emp where sal < (select sal-1000 from emp ename='SCOTT');
+select ename, sal from emp where sal < (select sal-1000 from emp ename='SCOTT')
+                                                                      *
+ERROR at line 1:
+ORA-00907: missing right parenthesis 
+
+
+SQL> select ename, sal from emp where sal < (select sal-1000 from emp where ename='SCOTT');
+
+ENAME                       SAL                                                                                                                                                                                                                           
+-------------------- ----------                                                                                                                                                                                                                           
+SMITH                       800                                                                                                                                                                                                                           
+ALLEN                      1600                                                                                                                                                                                                                           
+WARD                       1250                                                                                                                                                                                                                           
+MARTIN                     1250                                                                                                                                                                                                                           
+TURNER                     1500                                                                                                                                                                                                                           
+ADAMS                      1100                                                                                                                                                                                                                           
+JAMES                       950                                                                                                                                                                                                                           
+MILLER                     1300                                                                                                                                                                                                                           
+
+8 rows selected.
+
+SQL> --8. job이 manager인 사원들의 최소급여보다 급여가 적은 사원의 이름, 급여 출력
+SQL> select ename, sal from emp where sal < (select min(sal) from emp where job='MANAGER');
+
+ENAME                       SAL                                                                                                                                                                                                                           
+-------------------- ----------                                                                                                                                                                                                                           
+SMITH                       800                                                                                                                                                                                                                           
+ALLEN                      1600                                                                                                                                                                                                                           
+WARD                       1250                                                                                                                                                                                                                           
+MARTIN                     1250                                                                                                                                                                                                                           
+TURNER                     1500                                                                                                                                                                                                                           
+ADAMS                      1100                                                                                                                                                                                                                           
+JAMES                       950                                                                                                                                                                                                                           
+MILLER                     1300                                                                                                                                                                                                                           
+
+8 rows selected.
+
+SQL> --9. 이름이 S로 시작하고 마지막글자가 H인 사원의 이름을 출력하세요
+SQL> select ename from emp where ename 'S%' and ename '%H';
+select ename from emp where ename 'S%' and ename '%H'
+                                  *
+ERROR at line 1:
+ORA-00920: invalid relational operator 
+
+
+SQL> select ename from emp where ename like 'S%' and ename like '%H';
+
+ENAME                                                                                                                                                                                                                                                     
+--------------------                                                                                                                                                                                                                                      
+SMITH                                                                                                                                                                                                                                                     
+
+SQL> --10. WARD가 소속된 부서 사원들의 평균 급여보다 급여가 높은 사원의 이름, 급여 출력
+SQL> select ename, sal from emp where sal > (select from avg(sal) from emp
+  2  where deptno = (select from );
+select ename, sal from emp where sal > (select from avg(sal) from emp
+                                        *
+ERROR at line 1:
+ORA-00921: unexpected end of SQL command 
+
+
+SQL> select ename, sal from emp where sal > (select avg(sal) from emp
+  2  where deptno = (select deptno from emp where ename='WARD');
+select ename, sal from emp where sal > (select avg(sal) from emp
+                                        *
+ERROR at line 1:
+ORA-00921: unexpected end of SQL command 
+
+
+SQL> select ename, sal from emp where sal > (select avg(sal) from emp
+  2  where deptno = (select deptno from emp where ename='WARD'));
+
+ENAME                       SAL                                                                                                                                                                                                                           
+-------------------- ----------                                                                                                                                                                                                                           
+ALLEN                      1600                                                                                                                                                                                                                           
+JONES                      2975                                                                                                                                                                                                                           
+BLAKE                      2850                                                                                                                                                                                                                           
+CLARK                      2450                                                                                                                                                                                                                           
+SCOTT                      3000                                                                                                                                                                                                                           
+KING                       5000                                                                                                                                                                                                                           
+FORD                       3000                                                                                                                                                                                                                           
+
+7 rows selected.
+
+SQL> --11.최소급여를 받는 사원과 부서가 같은 사원의 부서번호, 사원명 출력
+SQL> select deptno, ename from emp where deptno = (select min(sal) from emp);
+
+no rows selected
+
+SQL> select deptno, ename from emp where deptno = (select deptno from emp where sal =(select min(sal) from emp));
+
+    DEPTNO ENAME                                                                                                                                                                                                                                          
+---------- --------------------                                                                                                                                                                                                                           
+        20 SMITH                                                                                                                                                                                                                                          
+        20 JONES                                                                                                                                                                                                                                          
+        20 SCOTT                                                                                                                                                                                                                                          
+        20 ADAMS                                                                                                                                                                                                                                          
+        20 FORD                                                                                                                                                                                                                                           
+
+SQL> spool off

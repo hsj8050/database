@@ -1,0 +1,76 @@
+SQL> select;
+select
+     *
+ERROR at line 1:
+ORA-00936: missing expression 
+
+
+SQL> ed
+Wrote file afiedt.buf
+
+  1  --쿼리문제 1차
+
+1. ALLEN과 부서가 같은 사원들의 부서번호, 사원명, 입사일 출력 높은 급여순 출력
+
+select deptno, ename, hiredate from emp where deptno = (select deptno from emp where ename = 'ALLEN') order by sal desc;
+
+2. 이름에 "T"자가 들어가는 사원들의 급여의 합을 구하세요
+
+select sum(sal) as total from emp where ename like "%T%";
+as(알리아스 - 가칭, 가명)
+
+3. 사원의 평균급여보다 급여가 낮은 사원의 이름, 급여를 출력하세요
+select ename, sal from emp where sal < (select avg(sal) from emp);
+
+4. 20번 부서의 최고 급여보다 많은 급여를 받는 사원의 사원번호, 사원명, 급여를 출력하세요
+select deptno, ename, sal from emp where sal > (select max(sal) from emp where deptno = 20);
+
+5. SMITH와 같은 부서에 속한 사원들의 평균 급여보다 큰 급여를 받는 모든 사원의 사원명, 급여 출력
+
+select ename, sal from emp where sal > (select avg(sal) from emp where deptno= (select deptno from emp where ename='SMITH'));
+
+6. EMP 테이블에서 최소급여와 최대급여의 차이를 아래와 같이 출력하세요
+select ( max(sal) - min(sal) ) as 급여차이 from emp;
+select ( (select max(sal) from emp) - (selectmin(sal) from emp) ) as result from dual=(가상의 더미)
+
+7. SCOTT의 급여에서 1000을 뺀 급여보다 적게받는 사원의 이름, 급여를 출력하세요
+select ename, sal from emp where sal  < (select sal-1000 from emp where ename='SCOTT');
+
+8. JOB이 MANAGER인 사원들의 최소급여 보다 급여가 적은 사원의 이름, 급여를 출력
+
+select ename, sal from emp where sal < (select min(sal) from emp where job = 'MANAGER');
+
+9. 이름이 S로 시작하고 마지막글자가 H인 사원의 이름을 출력하세요.
+
+select ENAME FROM EMP WHERE ENAME LIKE 'S%' AND ENAME LIKE '%H';
+SELECT ENAME FROM EMP WHERE ENAME LIKE 'S%H';
+
+10. .WARD가 소속된 부서 사원들의 평균 급여보다 급여가 높은 사원의 이름 ,급여를 출력하세요.
+
+SELECT ENAME, SAL FROM EMP WHERE SAL 
+	> (SELECT FROM AVG(SAL) WHERE DEPTNO = (SELECT DEPTNO FROM EMP WHERE ENAME='WARD') );
+
+11. 최소급여를 받는 사원과 부서가 같은 사원의 부서번호, 사원명을 출력하세요. (틀렸다.)
+
+SELECT DEPTNO, ENAME FROM EMP WHERE DEPTNO 
+	= (SELECT DEPTNO FROM EMP WHERE SAL = (SELECT MIN(SAL) FROM EMP));
+
+12. 가장 높은 급여를 받는 사원보다 입사일이 늦은 사원의 이름, 입사일을 출력하세요.
+
+SELECT ENAME, HIREDATE FROM EMP WHERE HIREDATE 
+	> (SELECT HIREDATE FROM EMP WHERE SAL = (SELECT MAX(SAL) FROM EMP) );
+
+13. WARD 를 담당하는 매니져의 급여보다 급여가 낮은 사원의 이름,급여를 급여가 높은 순으로 출력하시오. (틀림)
+
+SELECT ENAME, SAL FROM EMP WHERE SAL 
+	< (SELECT SAL FROM EMP WHERE EMPNO = (SELECT MGR FROM EMP WHERE ENAME='WARD') ) ORDER BY sal DESC;
+
+14. 커미션 계약을 하지 않은 사원의 급여의 합을 구하세요.
+
+SELECT SUM(SAL) FROM EMP WHERE COMM IS NULL;
+
+15. ADAMS의 업무와 같은 업무를 보는 사원의 급여의 평균보다 높은 급여를 받는 사원의 이름,급여를 출력하세요
+select ename, sal from emp where sal 
+	> (select avg(sal) from emp where job = (select job from emp where ename='ADAMS') ) ;
+
+SQL> spool off
