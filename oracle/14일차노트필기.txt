@@ -1,0 +1,82 @@
+SQL> conn system/1234
+Connected.
+SQL> show user;
+USER is "SYSTEM"
+
+1. 아래의 조건으로 데이터베이스 생성 
+SQL> create tablespace TESTSPACE2
+  2  datafile 'C:\oraclexe\app\oracle\oradata\XE\TESTSPACE2.DBF'
+  3  size 1M;
+
+Tablespace created.
+
+2. 아래의 조건 유저 생성(유저명:js1226/ pw: 1234 / 기본사용 tablespace: testspace2 / 사용량 무제한)
+
+SQL> create user js1226
+  2  identified by 1234
+  3  default tablespace TESTSPACE2
+  4  quota unlimited on TESTSPACE2;
+
+User created.
+
+3.아래의 조건으로 사용자에게 권한 부여(접속권한, 테이블 권한, sequence 권한)
+SQL> grant create session, create table to js1226;
+Grant succeeded.
+
+-----------------------------------------------------접속권한, 테이블권한
+
+SQL> grant create sequence to js1226;
+Grant succeeded.
+
+-----------------------------------------------------sequence 권한
+
+4. js1226에 접속 테이블 생성
+SQL> conn js1226/1234
+Connected.
+
+SQL>create table member(		테이블명 : member
+member_idx number primary key	컬럼명 member_idx  / 숫자형 / 제약조건 : 주키 
+,name varchar2(20) not null		컬럼명 name / 문자형- 20 / 제약조건: null허용하지않음
+,phone varchar2(13) unique not null	컬럼명 phone / 문자형- 13 / 제약조건: 중복불허, null허용x
+,age number check (age >= 19)	컬럼명 age / 숫자형 / 제약조건 : 19세 이상
+,regdate date default sysdate	컬럼명 regdate / 날짜형 / 제약조건 : 현재날짜 기준
+,point number default 5000		컬럼명 point / 숫자형 / 제약조건 : 기본값 5000원 부여
+);
+
+5. 테이블 구조 변경하기 
+
+1) 없던 컬럼을 하나 만들기 (컬럼명 addr / 문자형 -50바이트)
+SQL> alter table member	
+  2  add addr varchar2(50);
+
+2) 컬럼명 재설정하기 (컬럼명 phone => tel)
+SQL> alter table member
+  2  rename column phone to tel;
+
+3) 컬럼의 자료형 크기 변경하기 (30으로)
+SQL> alter table member
+  2  modify name varchar2(30);
+
+6. 시퀀스 생성하기
+SQL> create sequence seq_member
+  2  start with 1
+  3  increment by 1;
+Sequence created.
+
+7. member 테이블에 회원정보 1건 집어넣기
+SQL> insert into member(member_idx, name, tel, age)
+  2  values(seq_member.nextval, 'batman', '010-8888-9999', 23);
+
+1 row created.
+
+8. 멤버 테이블 정보 수정( 이름 batman => xman으로)
+SQL> update member set name='xman' where name='batman';
+
+1 row updated.
+
+9. 멤버 테이블의 회원 삭제하기
+SQL> delete member where name='batman';
+
+0 rows deleted.
+
+SQL> spool off
