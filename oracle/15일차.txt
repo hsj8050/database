@@ -1,0 +1,166 @@
+SQL> --1.아래의 조건으로 데이터 베이스 생성
+SQL> --create tablespace testspace
+SQL> --datafile 'C:\oraclexe\app\oracle\oradata\XE\testspace.dbf'
+SQL> --size 1m;
+SQL> --2.유저 생성
+SQL> --create user js1226
+SQL> --identified by 1234
+SQL> --default tablespace testspace
+SQL> --quota unlimited on testspace
+SQL> --3.접속권한, table권한, sequence권한 부여
+SQL> --grant create session, create table, create sequence to js 1226;
+SQL> --4. 만든 유저에 접속후, 테이블 생성
+SQL> --conn js1226/1234
+SQL> --create table member(
+SQL> --member_idx number primary key
+SQL> --, name varchar2(20) not null
+SQL> --, phone varchar2(13) unique not null
+SQL> --, age number check (age >=19)
+SQL> --, regdate date default sysdate
+SQL> --, point number default 5000
+SQL> --);
+SQL> --5. 테이블 구조 변경(DDL)
+SQL> --alter table member
+SQL> --add addr varchar2(50);
+SQL> --6. 컬럼명 변경
+SQL> --alter table member
+SQL> --rename column phone to tell;
+SQL> --7. name 컬럼의 자료형 크기 30바이트로 변경
+SQL> --alter table member
+SQL> --modify name varchar2(30);
+SQL> --8.시퀀스 생성
+SQL> --create sequence seq_member
+SQL> --start with 1
+SQL> --increment by 1;
+SQL> --9.member 테이블에 회원정보 1건 넣기
+SQL> --insert into member(member_index, name, tel, age)
+SQL> --values(seq_member.nextvalue, 'batman', '010', 23);
+SQL> --10.member 테이블 정보 수정 (9.부터 DML)
+SQL> --update member set name='xman' where name='batman';
+SQL> --11.테이블의 회원 삭제하기
+SQL> --delete member where name='xman';
+SQL> ------------------14일차 답안-----------------------
+SQL> conn js1226/1234;
+Connected.
+SQL> conn js 1211/1234;
+SP2-0306: Invalid option.
+Usage: CONN[ECT] [{logon|/|proxy} [AS {SYSDBA|SYSOPER|SYSASM}] [edition=value]]
+where <logon> ::= <username>[/<password>][@<connect_identifier>]
+      <proxy> ::= <proxyuser>[<username>][/<password>][@<connect_identifier>]
+SQL> conn user1211/1234;
+Connected.
+SQL> --TRANSACTION(트랜잭션)
+SQL> --두개 이상의 DML로 이루어진 업무단위가 하나라도 실패하면
+SQL> --전체를 실패로 처리하는 논리적 업무수행 단위
+SQL> --접속과 동시에 트랜잭션이 확정된 것이 없는 상태
+SQL> SELECT TABLE_NAME FROM USER_TABLES;
+
+TABLE_NAME                                                                      
+------------------------------------------------------------                    
+DEPT                                                                            
+EMP                                                                             
+DEPT2                                                                           
+EMP2                                                                            
+MEMBER                                                                          
+MEMBER2                                                                         
+DUMMY                                                                           
+MEMBER3                                                                         
+MEMBER4                                                                         
+MEMBER5                                                                         
+MEMBER6                                                                         
+
+11 rows selected.
+
+SQL> --트랜잭션 가동 후 첫 DML 가동해보자
+SQL> INSERT INTO MEMBER(NAME) VALUES('TEST');
+
+1 row created.
+
+SQL> --트랜잭션을 여기서 끝내고 싶은지, 아니면 돌려놓고 싶은지 결정 가능
+SQL> SELECT * FROM MEMBER;
+
+CLASSNAME                                                                       
+----------------------------------------                                        
+NAME                                                                            
+----------------------------------------                                        
+PHONE                                                                           
+------------------------------------------------------------                    
+fullstack                                                                       
+batman                                                                          
+010                                                                             
+                                                                                
+fullstack                                                                       
+batman                                                                          
+010                                                                             
+
+CLASSNAME                                                                       
+----------------------------------------                                        
+NAME                                                                            
+----------------------------------------                                        
+PHONE                                                                           
+------------------------------------------------------------                    
+                                                                                
+                                                                                
+TEST                                                                            
+                                                                                
+                                                                                
+
+SQL> set linesize 250;
+SQL> set pagesize 30;
+SQL> --트랜잭션 가동후 두번째 DML 수행
+SQL> UPDATE MEMBER NAME='BABO'
+  2  WHERE NAME='TEST';
+UPDATE MEMBER NAME='BABO'
+                  *
+ERROR at line 1:
+ORA-00971: missing SET keyword 
+
+
+SQL> ED
+Wrote file afiedt.buf
+
+  1  UPDATE SET MEMBER NAME='BABO'
+  2* WHERE NAME='TEST'
+SQL> /
+UPDATE SET MEMBER NAME='BABO'
+       *
+ERROR at line 1:
+ORA-00903: invalid table name 
+
+
+SQL> UPDATE MEMBER SET NAME='BABO' WHERE NAME='TEST';
+
+1 row updated.
+
+SQL> --처음부터 이 트랜잭션을 없던 것으로 돌려놓고 싶다면 ROLLBACK
+SQL> --이 트랜잭션을 여기서 완전히 확정 짓고싶다면 COMMIT
+SQL> ROLLBACK;
+
+Rollback complete.
+
+SQL> --ROLLBACK에 의해 이 트랜잭션을 이루고 있었던 모든 DML은
+SQL> --처음부터 없었던 것으로 돌려놓아지고, 따라서 이 거래도 여기서 종료
+SQL> --이 시점부터 새로운 트랜잭션이 시작된다.
+SQL> SELECT NAME FROM MEMBER;
+
+NAME                                                                                                                                                                                                                                                      
+----------------------------------------                                                                                                                                                                                                                  
+batman                                                                                                                                                                                                                                                    
+batman                                                                                                                                                                                                                                                    
+
+SQL> --새롭게 시작된 트랜잭션에 3가지 DML로 구성후 COMMIT해보기
+SQL> INSERT INTO MEMBER(NAME) VALUES('XMAN');
+
+1 row created.
+
+SQL> INSERT INTO MEMBER(NAME) VALUES('SUPERMAN');
+
+1 row created.
+
+SQL> COMMIT;
+
+Commit complete.
+
+SQL> --이 트랜잭션이 종료되고, 이 트랜잭션을 이루고 있었던 DML업무는 확정이 완료된다.
+SQL> --위에서 명시한 COMMIT과 ROLLBACK에 의해 새로운 트랜잭션이 또 시작..
+SQL> SPOOL OFF;
