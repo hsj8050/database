@@ -1,0 +1,206 @@
+SQL> desc table
+ERROR:
+ORA-00931: missing identifier 
+
+
+SQL> desc table;
+ERROR:
+ORA-00931: missing identifier 
+
+
+SQL> --1. 사원들의 급여에서 1000을 뺀 급여의 값을 출력하되, 음수가 나오지 않도록 절대값 출력
+SQL> select abs(sal-1000) from emp;
+
+ABS(SAL-1000)                                                                   
+-------------                                                                   
+          200                                                                   
+          600                                                                   
+          250                                                                   
+         1975                                                                   
+          250                                                                   
+         1850                                                                   
+         1450                                                                   
+         2000                                                                   
+         4000                                                                   
+          500                                                                   
+          100                                                                   
+
+ABS(SAL-1000)                                                                   
+-------------                                                                   
+           50                                                                   
+         2000                                                                   
+          300                                                                   
+
+14 rows selected.
+
+SQL> set linesize 250;
+SQL> set pagesize 30;
+SQL> select * from emp;
+
+     EMPNO ENAME                JOB                       MGR HIREDATE        SAL       COMM     DEPTNO                                                                                                                                                   
+---------- -------------------- ------------------ ---------- -------- ---------- ---------- ----------                                                                                                                                                   
+      7369 SMITH                CLERK                    7902 80/12/17        800                    20                                                                                                                                                   
+      7499 ALLEN                SALESMAN                 7698 81/02/20       1600        300         30                                                                                                                                                   
+      7521 WARD                 SALESMAN                 7698 81/02/22       1250        500         30                                                                                                                                                   
+      7566 JONES                MANAGER                  7839 81/04/02       2975                    20                                                                                                                                                   
+      7654 MARTIN               SALESMAN                 7698 81/09/28       1250       1400         30                                                                                                                                                   
+      7698 BLAKE                MANAGER                  7839 81/05/01       2850                    30                                                                                                                                                   
+      7782 CLARK                MANAGER                  7839 81/06/09       2450                    10                                                                                                                                                   
+      7788 SCOTT                ANALYST                  7566 87/04/19       3000                    20                                                                                                                                                   
+      7839 KING                 PRESIDENT                     81/11/17       5000                    10                                                                                                                                                   
+      7844 TURNER               SALESMAN                 7698 81/09/08       1500          0         30                                                                                                                                                   
+      7876 ADAMS                CLERK                    7788 87/05/23       1100                    20                                                                                                                                                   
+      7900 JAMES                CLERK                    7698 81/12/03        950                    30                                                                                                                                                   
+      7902 FORD                 ANALYST                  7566 81/12/03       3000                    20                                                                                                                                                   
+      7934 MILLER               CLERK                    7782 82/01/23       1300                    10                                                                                                                                                   
+
+14 rows selected.
+
+SQL> --2.실수 1.1-3.9 사이의 실수 값들중 최대 정수가 반환되도록 오라클 함수를 적용하세요
+SQL> select floor(3.9) "max" from dual;
+
+       max                                                                                                                                                                                                                                                
+----------                                                                                                                                                                                                                                                
+         3                                                                                                                                                                                                                                                
+
+SQL> select floor(1.1, 3.9) "min" from dual;
+select floor(1.1, 3.9) "min" from dual
+       *
+ERROR at line 1:
+ORA-00909: invalid number of arguments 
+
+
+SQL> select ceil({1.1},0) from dual;
+select ceil({1.1},0) from dual
+            *
+ERROR at line 1:
+ORA-00911: invalid character 
+
+
+SQL> select ceil(1.1) from dual;
+
+ CEIL(1.1)                                                                                                                                                                                                                                                
+----------                                                                                                                                                                                                                                                
+         2                                                                                                                                                                                                                                                
+
+SQL> --4. 77을 10으로 나누었을때 나머지값 출력
+SQL> select remainder(77, 10) from dual;
+
+REMAINDER(77,10)                                                                                                                                                                                                                                          
+----------------                                                                                                                                                                                                                                          
+              -3                                                                                                                                                                                                                                          
+
+SQL> select mod(77,10) "remainder" from dual;
+
+ remainder                                                                                                                                                                                                                                                
+----------                                                                                                                                                                                                                                                
+         7                                                                                                                                                                                                                                                
+
+SQL> --5.급여는 '연봉'이라는 컬럼명, 데이터에는 '만원'이 함께 출력되도록하시오
+SQL> select ename, sal as '연봉' from emp where sal || '만원';
+select ename, sal as '연봉' from emp where sal || '만원'
+                     *
+ERROR at line 1:
+ORA-00923: FROM keyword not found where expected 
+
+
+SQL> select ename, sal || '만원' as '연봉' from emp;
+select ename, sal || '만원' as '연봉' from emp
+                                  *
+ERROR at line 1:
+ORA-00923: FROM keyword not found where expected 
+
+
+SQL> select ename, sal as '연봉' from emp;
+select ename, sal as '연봉' from emp
+                     *
+ERROR at line 1:
+ORA-00923: FROM keyword not found where expected 
+
+
+SQL> select ename, sal from emp;
+
+ENAME                       SAL                                                                                                                                                                                                                           
+-------------------- ----------                                                                                                                                                                                                                           
+SMITH                       800                                                                                                                                                                                                                           
+ALLEN                      1600                                                                                                                                                                                                                           
+WARD                       1250                                                                                                                                                                                                                           
+JONES                      2975                                                                                                                                                                                                                           
+MARTIN                     1250                                                                                                                                                                                                                           
+BLAKE                      2850                                                                                                                                                                                                                           
+CLARK                      2450                                                                                                                                                                                                                           
+SCOTT                      3000                                                                                                                                                                                                                           
+KING                       5000                                                                                                                                                                                                                           
+TURNER                     1500                                                                                                                                                                                                                           
+ADAMS                      1100                                                                                                                                                                                                                           
+JAMES                       950                                                                                                                                                                                                                           
+FORD                       3000                                                                                                                                                                                                                           
+MILLER                     1300                                                                                                                                                                                                                           
+
+14 rows selected.
+
+SQL> select ename, sal as "연봉" from emp;
+
+ENAME                      연봉                                                                                                                                                                                                                           
+-------------------- ----------                                                                                                                                                                                                                           
+SMITH                       800                                                                                                                                                                                                                           
+ALLEN                      1600                                                                                                                                                                                                                           
+WARD                       1250                                                                                                                                                                                                                           
+JONES                      2975                                                                                                                                                                                                                           
+MARTIN                     1250                                                                                                                                                                                                                           
+BLAKE                      2850                                                                                                                                                                                                                           
+CLARK                      2450                                                                                                                                                                                                                           
+SCOTT                      3000                                                                                                                                                                                                                           
+KING                       5000                                                                                                                                                                                                                           
+TURNER                     1500                                                                                                                                                                                                                           
+ADAMS                      1100                                                                                                                                                                                                                           
+JAMES                       950                                                                                                                                                                                                                           
+FORD                       3000                                                                                                                                                                                                                           
+MILLER                     1300                                                                                                                                                                                                                           
+
+14 rows selected.
+
+SQL> select ename, sal||'만원' as "연봉" from emp;
+
+ENAME                연봉                                                                                                                                                                                                                                 
+-------------------- --------------------------------------------------------------------------------------------                                                                                                                                         
+SMITH                800만원                                                                                                                                                                                                                              
+ALLEN                1600만원                                                                                                                                                                                                                             
+WARD                 1250만원                                                                                                                                                                                                                             
+JONES                2975만원                                                                                                                                                                                                                             
+MARTIN               1250만원                                                                                                                                                                                                                             
+BLAKE                2850만원                                                                                                                                                                                                                             
+CLARK                2450만원                                                                                                                                                                                                                             
+SCOTT                3000만원                                                                                                                                                                                                                             
+KING                 5000만원                                                                                                                                                                                                                             
+TURNER               1500만원                                                                                                                                                                                                                             
+ADAMS                1100만원                                                                                                                                                                                                                             
+JAMES                950만원                                                                                                                                                                                                                              
+FORD                 3000만원                                                                                                                                                                                                                             
+MILLER               1300만원                                                                                                                                                                                                                             
+
+14 rows selected.
+
+SQL> --6. 사원의 이름, 급여, 업무를 출력하되 업무는 소문자로 출력
+SQL> select ename, sal, lower(job) from emp;
+
+ENAME                       SAL LOWER(JOB)                                                                                                                                                                                                                
+-------------------- ---------- ------------------                                                                                                                                                                                                        
+SMITH                       800 clerk                                                                                                                                                                                                                     
+ALLEN                      1600 salesman                                                                                                                                                                                                                  
+WARD                       1250 salesman                                                                                                                                                                                                                  
+JONES                      2975 manager                                                                                                                                                                                                                   
+MARTIN                     1250 salesman                                                                                                                                                                                                                  
+BLAKE                      2850 manager                                                                                                                                                                                                                   
+CLARK                      2450 manager                                                                                                                                                                                                                   
+SCOTT                      3000 analyst                                                                                                                                                                                                                   
+KING                       5000 president                                                                                                                                                                                                                 
+TURNER                     1500 salesman                                                                                                                                                                                                                  
+ADAMS                      1100 clerk                                                                                                                                                                                                                     
+JAMES                       950 clerk                                                                                                                                                                                                                     
+FORD                       3000 analyst                                                                                                                                                                                                                   
+MILLER                     1300 clerk                                                                                                                                                                                                                     
+
+14 rows selected.
+
+SQL> spool off
