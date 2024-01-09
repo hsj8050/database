@@ -1,0 +1,42 @@
+18일차 노트필기
+
+sqlplus user1211/1234
+
+set linesize 250;
+set pazesize 30;
+
+select * from emp;
+select * from dept;
+
+- 급여가 3000인 사원의 이름, 급여, 부서명을 출력하시오
+select ename, sal, dname from emp, dept 
+=> 이렇게 수행할경우 
+emp테이블의 갯수 * dept테이블 갯수
+
+14개의 테이블만을 수행하는 방법
+select ename, sal, dname  from emp, dept
+where emp.deptno=dept.deptno;
+
+
+-이름에 S가 들어가는 사원의 이름, 부서명, 부서위치 출력
+select ename, dname, loc from emp, dept
+where emp.deptno=dept.deptno and ename like '%S%';
+
+-10번 부서의 급여의 평균보다, 급여가 높은 사원의 이름, 급여, 부서위치를 출력
+select ename, sal, loc from emp E, dept D
+where E.deptno=D.deptno 
+and sal > (select avg(sal) from emp where deptno =10);
+
+ERD(Entity Relation Diagram - 개체관계도)
+
+host chop 65001(한글 최적화인거 같은데 실패함)
+
+ create table product(
+  2  product_idx number primary key
+  3  , product_name varchar2(30)
+  4  , price number default 0 not null
+  5  , subcategory_idx number
+  6  , constraint fk_subcategory_product foreign key(subcategory_idx)
+  7  references subcategory(subcategory_idx));
+
+=> foreign key 부여방법
